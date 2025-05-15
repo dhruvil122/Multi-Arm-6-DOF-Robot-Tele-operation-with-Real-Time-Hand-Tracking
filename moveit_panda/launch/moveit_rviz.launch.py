@@ -1,59 +1,80 @@
+import os
+import xacro
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
-
+from ament_index_python.packages import get_package_share_directory
 from moveit_configs_utils import MoveItConfigsBuilder
-from moveit_configs_utils.launches import generate_moveit_rviz_launch
+
 
 def generate_launch_description():
-    arm_id = LaunchConfiguration("arm_id")
-    load_gripper = LaunchConfiguration("load_gripper")
-    ee_id = LaunchConfiguration("ee_id")
+   
+    moveit_config = (
+        MoveItConfigsBuilder("multi_arm", package_name="moveit_panda")
+        .robot_description_semantic("config/multi_arm.srdf")
+        .to_moveit_configs()
+    )
 
-    declare_arm_id = DeclareLaunchArgument("arm_id", default_value="multi_arm")
-    declare_load_gripper = DeclareLaunchArgument("load_gripper", default_value="true")
-    declare_ee_id = DeclareLaunchArgument("ee_id", default_value="franka_hand")
+    # Generate robot_description manually from xacro
+    xacro_path = os.path.join(
+        get_package_share_directory("franka_description"),
+        "robots",
+        "multi_arm",
+        "multi_arm.urdf.xacro"
+    )
+    robot_description = xacro.process_file(xacro_path, mappings={
+        "arm_id": "fr3",
+        "hand": "true",
+        "ee_id": "franka_hand"
+    }).toxml()
 
-    moveit_config = MoveItConfigsBuilder(
-        robot_name="multi_arm",
-        package_name="moveit_panda"
-    ).to_moveit_configs()
+   
+    moveit_config.robot_description = {"robot_description": robot_description}
 
     return LaunchDescription([
-        declare_arm_id,
-        declare_load_gripper,
-        declare_ee_id,
+        # Publish robot state
+        Node(
+            package="robot_state_publisher",
+            executable="robot_state_publisher",
+            parameters=[{"robot_description": robot_description}]
+        ),
 
+        # GUI to move joints
         Node(
             package="joint_state_publisher_gui",
             executable="joint_state_publisher_gui"
         ),
-        Node(
-            package="robot_state_publisher",
-            executable="robot_state_publisher",
-            parameters=[moveit_config.robot_description],
-            output="screen"
-        ),
+
+        # Move group
         Node(
             package="moveit_ros_move_group",
             executable="move_group",
-            output="screen",
             parameters=[
-                moveit_config.robot_description,
+                {"robot_description": robot_description},
                 moveit_config.robot_description_semantic,
                 moveit_config.robot_description_kinematics,
+                moveit_config.planning_scene_monitor,
                 moveit_config.joint_limits,
-                moveit_config.planning_pipelines,
                 moveit_config.trajectory_execution,
                 moveit_config.moveit_cpp,
-                moveit_config.planning_scene_monitor,
+                moveit_config.planning_pipelines
             ],
+            output="screen"
         ),
+
+ 
         Node(
             package="rviz2",
             executable="rviz2",
             name="rviz2",
-           
+            parameters=[
+                {"robot_description": robot_description},
+                moveit_config.robot_description_semantic
+            ],
+            arguments=["-d", os.path.join(
+                get_package_share_directory("moveit_panda"),
+                "config",
+                "moveit.rviz"
+            )],
+            output="screen"
         )
     ])
