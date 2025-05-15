@@ -62,9 +62,11 @@ def generate_launch_description():
                 {"allow_trajectory_execution": True},
                 {"fake_execution_type": "interpolate"},  
                 {"trajectory_execution.allowed_execution_duration_scaling": 1.2},
+                {'use_sim_time': True}
                             ],
             output="screen"
-        ),
+        ),     
+
         Node(
             package="controller_manager",
             executable="ros2_control_node",
@@ -74,8 +76,10 @@ def generate_launch_description():
                     "config",
                     "ros2_controllers.yaml"
                 ),
+                moveit_config.robot_description_semantic,
+                moveit_config.robot_description_kinematics,
                 {"robot_description": robot_description},
-                {"use_sim_time": False}
+                {"use_sim_time": False},
             ],
         
         ),
@@ -85,29 +89,46 @@ def generate_launch_description():
         arguments=["panda1_arm_controller", "--controller-manager", "/controller_manager"],
         output="screen",
     ),
+     Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["panda2_arm_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    ),
     Node(
         package="controller_manager",
         executable="spawner",
         arguments=["panda1_gripper_controller", "--controller-manager", "/controller_manager"],
         output="screen",
     ),
+  
+    Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["panda2_gripper_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    ),
  
 
 
  
-        Node(
-            package="rviz2",
-            executable="rviz2",
-            name="rviz2",
-            parameters=[
-                {"robot_description": robot_description},
-                moveit_config.robot_description_semantic
-            ],
-            arguments=["-d", os.path.join(
-                get_package_share_directory("moveit_panda"),
-                "config",
-                "moveit.rviz"
-            )],
+    Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        parameters=[
+            {"robot_description": robot_description},
+            moveit_config.robot_description_semantic,
+            {"use_sim_time": True}
+        
+        ],
+        arguments=["-d", os.path.join(
+            get_package_share_directory("moveit_panda"),
+            "config",
+            "moveit.rviz"
+        )],
+        
+
          
         ),
 
@@ -115,6 +136,14 @@ def generate_launch_description():
         package="robot_bringup",
         executable = "ee_marker",
 
-    )
+    ),
+    Node(
+        package = "robot_bringup",
+        executable = "hand_tracking"
+    ),
+    Node(
+        package = "robot_bringup",
+        executable = "teleop_moveit"
+    ),
 
 ])

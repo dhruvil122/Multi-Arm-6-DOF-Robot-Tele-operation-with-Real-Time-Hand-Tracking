@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ee_marker = robot_bringup.marker:main',
-            'hand_tracking = robot_bringup.hand_tracking:main'
+            'hand_tracking = robot_bringup.hand_tracking:main',
+            'teleop_moveit = robot_bringup.teleop_moveit:main'
       
         ],
     },

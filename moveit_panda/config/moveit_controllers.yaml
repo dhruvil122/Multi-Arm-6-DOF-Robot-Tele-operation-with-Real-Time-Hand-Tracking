@@ -6,8 +6,6 @@ moveit_simple_controller_manager:
   controller_names:
     - panda1_arm_controller
     - panda2_arm_controller
-    - panda1_controller
-    - panda2_controller
     - panda1_gripper_controller
     - panda2_gripper_controller
 
