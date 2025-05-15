@@ -70,7 +70,7 @@ def generate_launch_description():
             executable="ros2_control_node",
             parameters=[
                 os.path.join(
-                    get_package_share_directory("moveit_panda"),  # use your package
+                    get_package_share_directory("moveit_panda"),  
                     "config",
                     "ros2_controllers.yaml"
                 ),
