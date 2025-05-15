@@ -56,9 +56,27 @@ def generate_launch_description():
                 moveit_config.joint_limits,
                 moveit_config.trajectory_execution,
                 moveit_config.moveit_cpp,
-                moveit_config.planning_pipelines
-            ],
+                moveit_config.planning_pipelines,
+                {"moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager"},
+                {"moveit_simple_controller_manager.fake_controllers": os.path.join(get_package_share_directory("moveit_panda"), "config", "ros2_controllers.yaml")},
+                {"allow_trajectory_execution": True},
+                {"fake_execution_type": "interpolate"},  
+                {"trajectory_execution.allowed_execution_duration_scaling": 1.2},
+                            ],
             output="screen"
+        ),
+        Node(
+            package="controller_manager",
+            executable="ros2_control_node",
+            parameters=[
+                os.path.join(
+                    get_package_share_directory("moveit_panda"),  # use your package
+                    "config",
+                    "ros2_controllers.yaml"
+                ),
+                {"use_sim_time": False}
+            ],
+        
         ),
 
  
@@ -75,6 +93,23 @@ def generate_launch_description():
                 "config",
                 "moveit.rviz"
             )],
-            output="screen"
-        )
-    ])
+         
+        ),
+  
+
+    Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["panda1_arm_controller",
+                    "panda2_arm_controller",
+                    "panda1_gripper_controller",
+                    "panda2_gripper_controller"],
+    
+    ),
+    Node(
+        package="robot_bringup",
+        executable = "ee_marker",
+
+    )
+
+])
