@@ -100,6 +100,9 @@
 
     <disable_collisions link1="right_fr3_hand" link2="right_fr3_link7" reason="Adjacent"/>
     <disable_collisions link1="right_fr3_hand" link2="right_fr3_rightfinger" reason="Adjacent"/>
+    <disable_collisions link1="right_fr3_leftfinger" link2="right_fr3_rightfinger" reason="never"/>
+   
+    <disable_collisions link1="left_fr3_leftfinger" link2="left_fr3_rightfinger" reason="never"/>
    
    
     <disable_collisions link1="right_fr3_link0" link2="right_fr3_link1" reason="Adjacent"/>

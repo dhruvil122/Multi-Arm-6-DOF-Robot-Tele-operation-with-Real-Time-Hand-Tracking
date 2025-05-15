@@ -14,7 +14,7 @@
   <xacro:arg name="number_of_robots" default = "2"/>
 
   <!-- Define arguments -->
-  <xacro:arg name="xyz_values" default="['0 0.7 0','0 -0.7 0']" />
+  <xacro:arg name="xyz_values" default="['0 0.75 0','0 -0.75 0']" />
   <xacro:property name="xyz_list" value="${$(arg xyz_values)}" />
 
   <!-- Define arguments -->
@@ -34,17 +34,17 @@
   <xacro:arg name="with_sc" default="false" />
 
   <!-- Is the robot being controlled with ros2_control?" -->
-  <xacro:arg name="ros2_control" default="false" />
+  <xacro:arg name="ros2_control" default="true" />
 
   <!-- IP address or hostname of the robot" -->
   <xacro:arg name="robot_ips" default="['172.16.0.2','172.16.0.3']" />
   <xacro:property name="robot_ips_list" value="${$(arg robot_ips)}" />
 
   <!-- Should a fake hardware be used? -->
-  <xacro:arg name="use_fake_hardware" default="false" />
+  <xacro:arg name="use_fake_hardware" default="true" />
 
   <!-- Should fake sensors be used? -->
-  <xacro:arg name="fake_sensor_commands" default="false" />
+  <xacro:arg name="fake_sensor_commands" default="true" />
 
   <!-- Should the robot be spawned in Gazebo?" -->
   <xacro:arg name="gazebo" default="false" />

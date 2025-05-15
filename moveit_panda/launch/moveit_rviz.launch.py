@@ -74,10 +74,25 @@ def generate_launch_description():
                     "config",
                     "ros2_controllers.yaml"
                 ),
+                {"robot_description": robot_description},
                 {"use_sim_time": False}
             ],
         
         ),
+    Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["panda1_arm_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    ),
+    Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["panda1_gripper_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    ),
+ 
+
 
  
         Node(
@@ -95,17 +110,7 @@ def generate_launch_description():
             )],
          
         ),
-  
 
-    Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["panda1_arm_controller",
-                    "panda2_arm_controller",
-                    "panda1_gripper_controller",
-                    "panda2_gripper_controller"],
-    
-    ),
     Node(
         package="robot_bringup",
         executable = "ee_marker",

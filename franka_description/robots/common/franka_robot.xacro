@@ -15,8 +15,8 @@
                       with_sc:='false'
                       ros2_control:=false
                       robot_ip:=''
-                      use_fake_hardware:=false
-                      fake_sensor_commands:=false
+                      use_fake_hardware:=true
+                      fake_sensor_commands:=true
                       gazebo_effort:=false
                       no_prefix:='false'
                       arm_prefix:=''
