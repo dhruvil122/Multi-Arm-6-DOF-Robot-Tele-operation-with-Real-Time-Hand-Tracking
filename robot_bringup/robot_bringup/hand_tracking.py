@@ -69,7 +69,7 @@ class HandTrackingNode(Node):
                     pose_l = PoseStamped()
                     pose_l.header.stamp = rclpy.time.Time().to_msg()
 
-                    pose_l.header.frame_id = 'left_base'
+                    pose_l.header.frame_id = 'left_fr3_link0'
                     pose_l.pose.position.x = msg.x
                     pose_l.pose.position.y = msg.y
                     pose_l.pose.position.z = 0.4 
@@ -90,7 +90,7 @@ class HandTrackingNode(Node):
                     pose_r = PoseStamped()
                     pose_r.header.stamp = rclpy.time.Time().to_msg()
 
-                    pose_r.header.frame_id = 'right_base'
+                    pose_r.header.frame_id = 'right_fr3_link0'
                     pose_r.pose.position.x = msg.x
                     pose_r.pose.position.y = msg.y
                     pose_r.pose.position.z = 0.4 

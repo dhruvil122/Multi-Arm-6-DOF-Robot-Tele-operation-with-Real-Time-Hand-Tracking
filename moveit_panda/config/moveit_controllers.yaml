@@ -19,7 +19,7 @@ moveit_simple_controller_manager:
       - left_fr3_joint4
       - left_fr3_joint5
       - left_fr3_joint6
-      - left_fr3_finger_joint1
+     
   panda2_arm_controller:
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
@@ -30,7 +30,7 @@ moveit_simple_controller_manager:
       - right_fr3_joint4
       - right_fr3_joint5
       - right_fr3_joint6
-      - right_fr3_finger_joint1
+     
   panda1_controller:
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory

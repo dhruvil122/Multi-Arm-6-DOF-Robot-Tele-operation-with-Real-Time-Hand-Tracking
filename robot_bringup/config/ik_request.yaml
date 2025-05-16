@@ -1,0 +1,21 @@
+ik_request:
+  group_name: "panda1_arm"
+  ik_link_name: "left_fr3_hand"
+  pose_stamped:
+    header:
+      frame_id: "left_fr3_link0"
+    pose:
+      position:
+        x: 0.4
+        y: 0.0
+        z: 0.4
+      orientation:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+        w: 1.0
+  timeout:
+    sec: 2
+    nanosec: 0
+  robot_state:
+    is_diff: true
