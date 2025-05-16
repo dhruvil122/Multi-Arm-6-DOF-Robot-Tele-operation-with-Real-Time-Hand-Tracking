@@ -60,7 +60,7 @@ class TeleopCartIK(Node):
             'left_fr3_joint1', 'left_fr3_joint2', 'left_fr3_joint3',
             'left_fr3_joint4', 'left_fr3_joint5', 'left_fr3_joint6'
         ]
-        msg.header.frame_id = 'left_fr3_link0'
+        msg.header.frame_id = 'left_fr3_link6'
   
         joint_state = self.call_ik_service('panda1_arm', joint_names, msg, 'left_fr3_link6')
         if joint_state:
@@ -71,7 +71,7 @@ class TeleopCartIK(Node):
             'right_fr3_joint1', 'right_fr3_joint2', 'right_fr3_joint3',
             'right_fr3_joint4', 'right_fr3_joint5', 'right_fr3_joint6'
         ]
-        msg.header.frame_id = 'right_fr3_link0'
+        msg.header.frame_id = 'right_fr3_link6'
         joint_state = self.call_ik_service('panda2_arm', joint_names, msg, 'right_fr3_link6')
         if joint_state:
             self.publish_trajectory(joint_state, self.right_joint_pub)
