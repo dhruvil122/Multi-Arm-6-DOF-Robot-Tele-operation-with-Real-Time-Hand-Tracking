@@ -73,7 +73,7 @@ def generate_launch_description():
                 moveit_config.robot_description_semantic,
                 moveit_config.robot_description_kinematics,
                 {"robot_description": robot_description},
-                {"use_sim_time": True},
+            
             ],
             output="screen",
         ),
@@ -128,7 +128,7 @@ def generate_launch_description():
             output="screen",
         ),
 
-        # Node(package="robot_bringup", executable="ee_marker"),
-        # Node(package="robot_bringup", executable="hand_tracking"),
-        # Node(package="robot_bringup", executable="teleop_moveit"),
+        #Node(package="robot_bringup", executable="ee_marker"),
+        #Node(package="robot_bringup", executable="hand_tracking"),
+        #Node(package="robot_bringup", executable="teleop_moveit"),
     ])
