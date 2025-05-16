@@ -1,84 +1,122 @@
+#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped
-from moveit_msgs.srv import GetPositionIK
+from rclpy.action import ActionClient
+
+from geometry_msgs.msg import PoseStamped, Pose
+from moveit_msgs.action import MoveGroup
+from moveit_msgs.msg import Constraints, PositionConstraint, OrientationConstraint
+from shape_msgs.msg import SolidPrimitive
 from builtin_interfaces.msg import Duration
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
-class TeleopCartIK(Node):
+
+class TeleopWithMoveGroup(Node):
     def __init__(self):
-        super().__init__('teleop_cart_ik')
+       
+        
+        super().__init__('teleop_with_movegroup')
 
-        self.create_subscription(PoseStamped, '/left_teleop_target_pose', self.left_teleop_target_callback, 10)
-        self.create_subscription(PoseStamped, '/right_teleop_target_pose', self.right_teleop_target_callback, 10)
+        
+        """self._mg_cli = ActionClient(self, MoveGroup, 'move_action')
+        self.get_logger().info("Waiting for MoveGroup action server…")
+        self._mg_cli.wait_for_server()
+        self.get_logger().info("✔ MoveGroup action server available")
+        """
 
+        self.pub_left = self.create_publisher(PoseStamped,"servo_left/pose_cmds",10)
+        self.pub_right = self.create_publisher(PoseStamped,"servo_right/pose_cmds",10)
+        self.create_subscription(
+            PoseStamped, '/left_teleop_target_pose',self.left_callback,10
+        )
+        self.create_subscription(
+            PoseStamped, '/right_teleop_target_pose',self.right_callback,10
+        )
+
+    def left_callback (self,m:PoseStamped):
+        m.header.frame_id = 'left_fr3_link0'
+        self.pub_left.publish(m)
+        self.get_logger().info("Publishing Pose Stamps for left robot")
+
+    def right_callback (self,m:PoseStamped):
+        m.header.frame_id = 'right_fr3_link0'
+        self.pub_right.publish(m)
+
+
+
+
+
+        """----------------Not Working - The movegroup is not in realtime hence not included in the final submission------------------"""
+
+    """def _on_pose(self, pose: PoseStamped, group: str, ee_link: str):
+   
+        pose.header.stamp.sec = 0
+        pose.header.stamp.nanosec = 0
+
+        goal = MoveGroup.Goal()
+        goal.request.group_name = group
+        goal.request.num_planning_attempts = 1
+        goal.request.allowed_planning_time = 0.5
+
+      
+        c = Constraints()
+       
+        pc = PositionConstraint()
+        pc.header = pose.header
+        pc.link_name = ee_link
+        pc.weight = 1.0
+       
+        box = SolidPrimitive()
+        box.type = SolidPrimitive.BOX
+        tol = 0.01
+        box.dimensions = [tol*2, tol*2, tol*2]
+        pc.constraint_region.primitives.append(box)
+        region_pose = Pose()
+        region_pose.position = pose.pose.position
+        region_pose.orientation.w = 1.0
+        pc.constraint_region.primitive_poses.append(region_pose)
      
-        self.cli = self.create_client(GetPositionIK, '/compute_ik')
-        while not self.cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Waiting for /compute_ik service...')
+        c.position_constraints.append(pc)
 
-        self.left_joint_pub = self.create_publisher(JointTrajectory, '/panda1_arm_controller/joint_trajectory', 10)
-        self.right_joint_pub = self.create_publisher(JointTrajectory, '/panda2_arm_controller/joint_trajectory', 10)
+    
+        oc = OrientationConstraint()
+        oc.header = pose.header
+        oc.link_name = ee_link
+        oc.orientation = pose.pose.orientation
+        oc.absolute_x_axis_tolerance = tol
+        oc.absolute_y_axis_tolerance = tol
+        oc.absolute_z_axis_tolerance = tol
+        oc.weight = 1.0
+        c.orientation_constraints.append(oc)
 
-    def call_ik_service(self, group_name, joint_names, pose_msg, ik_link):
-        req = GetPositionIK.Request()
-        req.ik_request.group_name = group_name
-        req.ik_request.ik_link_name = ik_link
-        req.ik_request.pose_stamped = pose_msg
-        req.ik_request.pose_stamped.header.stamp = self.get_clock().now().to_msg()
-        req.ik_request.timeout = Duration(sec=0, nanosec=500_000_000)
-        req.ik_request.robot_state.joint_state.name = joint_names
-        req.ik_request.robot_state.joint_state.position = [0.0] * len(joint_names)
-        req.ik_request.robot_state.is_diff = True
+        goal.request.goal_constraints.append(c)
 
-        future = self.cli.call_async(req)
-        rclpy.spin_until_future_complete(self, future)
+        self.get_logger().info(f"sending MoveGroup goal for {group}")
+        send_goal = self._mg_cli.send_goal_async(goal)
+        send_goal.add_done_callback(self._on_goal_response)
 
-        if future.result() and future.result().solution.joint_state.name:
-            self.get_logger().info(f" IK succeeded for {group_name}")
-            return future.result().solution.joint_state
+    def _on_goal_response(self, future):
+        handle = future.result()
+        if not handle.accepted:
+            self.get_logger().error("MoveGroup goal was rejected")
+            return
+        self.get_logger().info("MoveGroup goal accepted, awaiting result…")
+        handle.get_result_async().add_done_callback(self._on_move_result)
+
+    def _on_move_result(self, future):
+        result = future.result().result
+        if result.error_code.val == result.error_code.SUCCESS:
+            self.get_logger().info("plan+execute succeeded")
         else:
-            code = future.result().error_code.val if future.result() else 'no response'
-            self.get_logger().error(f"IK failed for {group_name}, error code: {code}")
-            return None
+            self.get_logger().error(f"plan+execute failed: {result.error_code.val}")
+"""
 
-    def publish_trajectory(self, joint_state, publisher):
-        traj = JointTrajectory()
-        traj.header.stamp = self.get_clock().now().to_msg()
-        traj.joint_names = joint_state.name
-
-        point = JointTrajectoryPoint()
-        point.positions = joint_state.position
-        point.time_from_start.sec = 1
-
-        traj.points.append(point)
-        publisher.publish(traj)
-        self.get_logger().info("Published trajectory to controller.")
-
-    def left_teleop_target_callback(self, msg):
-        joint_names = [
-            'left_fr3_joint1', 'left_fr3_joint2', 'left_fr3_joint3',
-            'left_fr3_joint4', 'left_fr3_joint5', 'left_fr3_joint6'
-        ]
-        msg.header.frame_id = 'left_fr3_link6'
-  
-        joint_state = self.call_ik_service('panda1_arm', joint_names, msg, 'left_fr3_link6')
-        if joint_state:
-            self.publish_trajectory(joint_state, self.left_joint_pub)
-
-    def right_teleop_target_callback(self, msg):
-        joint_names = [
-            'right_fr3_joint1', 'right_fr3_joint2', 'right_fr3_joint3',
-            'right_fr3_joint4', 'right_fr3_joint5', 'right_fr3_joint6'
-        ]
-        msg.header.frame_id = 'right_fr3_link6'
-        joint_state = self.call_ik_service('panda2_arm', joint_names, msg, 'right_fr3_link6')
-        if joint_state:
-            self.publish_trajectory(joint_state, self.right_joint_pub)
-
-def main(args=None):
-    rclpy.init(args=args)
-    node = TeleopCartIK()
+def main():
+    rclpy.init()
+    node = TeleopWithMoveGroup()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

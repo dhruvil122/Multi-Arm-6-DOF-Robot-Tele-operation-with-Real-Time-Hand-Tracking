@@ -45,7 +45,7 @@
                     component_group="panda2_gripper"/>
 
     <!-- 4) Optional: drive both arms at once -->
-    <group name="both_arms">
+    <group name="panda_arm">
         <chain base_link="left_fr3_link0"
             tip_link="left_fr3_link6"/>
         <chain base_link="right_fr3_link0"

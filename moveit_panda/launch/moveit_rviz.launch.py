@@ -7,6 +7,7 @@ from moveit_configs_utils import MoveItConfigsBuilder
 from launch.actions import TimerAction
 
 def generate_launch_description():
+
   
     moveit_config = (
         MoveItConfigsBuilder("multi_arm", package_name="moveit_panda")
@@ -39,6 +40,13 @@ def generate_launch_description():
             executable="joint_state_publisher_gui",
             parameters=[{"use_sim_time": True}],
         ),
+        Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
+            output="screen",
+          
+        ),
 
       
         Node(
@@ -63,6 +71,8 @@ def generate_launch_description():
             ],
             output="screen",
         ),
+        
+
 
       
         Node(
@@ -82,12 +92,7 @@ def generate_launch_description():
         TimerAction(
             period=3.0,  
             actions=[
-                Node(
-                    package="controller_manager",
-                    executable="spawner",
-                    arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-                    output="screen",
-                ),
+                
                 Node(
                     package="controller_manager",
                     executable="spawner",
@@ -128,7 +133,40 @@ def generate_launch_description():
             output="screen",
         ),
 
-        #Node(package="robot_bringup", executable="ee_marker"),
-        #Node(package="robot_bringup", executable="hand_tracking"),
-        #Node(package="robot_bringup", executable="teleop_moveit"),
+        Node(package="robot_bringup", executable="ee_marker"),
+        Node(package="robot_bringup", executable="hand_tracking"),
+        Node(package="robot_bringup", executable="teleop_moveit"),
+        TimerAction(
+            period=4.0,
+            actions=[
+                Node(
+                    package="moveit_servo",
+                    executable="servo_node_main",
+                    name="servo_left",
+                    output="screen",
+                    parameters=[
+                        os.path.join(get_package_share_directory("moveit_panda"), "config", "left_servo.yaml"),
+                        {"robot_description": robot_description},
+                        moveit_config.robot_description_semantic,
+                        moveit_config.robot_description_kinematics,
+                        {"use_sim_time": True}
+                    ],
+
+                ),
+                Node(
+                    package="moveit_servo",
+                    executable="servo_node_main",
+                    name="servo_right",
+                    output="screen",
+                    parameters=[
+                        os.path.join(get_package_share_directory("moveit_panda"), "config", "right_servo.yaml"),
+                        {"robot_description": robot_description},
+                        moveit_config.robot_description_semantic,
+                        moveit_config.robot_description_kinematics,
+                        {"use_sim_time": True}
+                    ],
+
+                ),
+    ]
+)
     ])
