@@ -1,5 +1,6 @@
 import os
 import xacro
+import yaml
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -15,6 +16,27 @@ def generate_launch_description():
         .robot_description_kinematics("config/kinematics.yaml")
         .to_moveit_configs()
     )
+    def load_file(package_name, file_path):
+        package_path = get_package_share_directory(package_name)
+        absolute_file_path = os.path.join(package_path, file_path)
+
+        try:
+            with open(absolute_file_path, "r") as file:
+                return file.read()
+        except EnvironmentError:  # parent of IOError, OSError *and* WindowsError where available
+            return None
+
+
+    def load_yaml(package_name, file_path):
+        package_path = get_package_share_directory(package_name)
+        absolute_file_path = os.path.join(package_path, file_path)
+
+        try:
+            with open(absolute_file_path, "r") as file:
+                return yaml.safe_load(file)
+        except EnvironmentError:  # parent of IOError, OSError *and* WindowsError where available
+            return None
+
 
    
     xacro_path = os.path.join(
@@ -26,6 +48,10 @@ def generate_launch_description():
         mappings={"arm_id":"fr3", "hand":"true", "ee_id":"franka_hand"}
     ).toxml()
     moveit_config.robot_description = {"robot_description": robot_description}
+    servo_yaml = load_yaml("moveit_panda", "config/left_servo.yaml")
+    servo_params = {"moveit_servo": servo_yaml}
+
+    
 
     return LaunchDescription([
 
@@ -145,7 +171,8 @@ def generate_launch_description():
                     name="servo_left",
                     output="screen",
                     parameters=[
-                        os.path.join(get_package_share_directory("moveit_panda"), "config", "left_servo.yaml"),
+                        #os.path.join(get_package_share_directory("moveit_panda"), "config", "left_servo.yaml"),
+                        servo_params,
                         {"robot_description": robot_description},
                         moveit_config.robot_description_semantic,
                         moveit_config.robot_description_kinematics,
@@ -153,20 +180,20 @@ def generate_launch_description():
                     ],
 
                 ),
-                Node(
-                    package="moveit_servo",
-                    executable="servo_node_main",
-                    name="servo_right",
-                    output="screen",
-                    parameters=[
-                        os.path.join(get_package_share_directory("moveit_panda"), "config", "right_servo.yaml"),
-                        {"robot_description": robot_description},
-                        moveit_config.robot_description_semantic,
-                        moveit_config.robot_description_kinematics,
-                        {"use_sim_time": True}
-                    ],
-
-                ),
+            # """   Node(
+            #        package="moveit_servo",
+            #        executable="servo_node_main",
+            #        name="servo_right",
+            #        output="screen",
+            #        parameters=[
+            #            os.path.join(get_package_share_directory("moveit_panda"), "config", "right_servo.yaml"),
+            #            {"robot_description": robot_description},
+            #            moveit_config.robot_description_semantic,
+            #            moveit_config.robot_description_kinematics,
+            #            {"use_sim_time": True}
+            #        ],
+#
+            #    ),"""
     ]
 )
     ])
