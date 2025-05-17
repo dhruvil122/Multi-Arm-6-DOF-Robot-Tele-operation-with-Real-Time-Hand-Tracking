@@ -7,7 +7,12 @@ from ament_index_python.packages import get_package_share_directory
 from moveit_configs_utils import MoveItConfigsBuilder
 from launch.actions import TimerAction
 
-def generate_launch_description():
+def generate_launch_description(): 
+    """ 
+        DESCLAIMER : If the servo does not start, Please user below ros2 command to trigger it in a new terminal.
+        It took 2 days to just eliminate this fundamental minor error.    
+        Always use ros2 service call /servo_left/start_servo std_srvs/srv/Trigger {} to start the servo motor
+    """
 
   
     moveit_config = (
@@ -48,8 +53,11 @@ def generate_launch_description():
         mappings={"arm_id":"fr3", "hand":"true", "ee_id":"franka_hand"}
     ).toxml()
     moveit_config.robot_description = {"robot_description": robot_description}
-    servo_yaml = load_yaml("moveit_panda", "config/left_servo.yaml")
-    servo_params = {"moveit_servo": servo_yaml}
+    #servo_yaml = load_yaml("moveit_panda", "config/left_servo.yaml")
+    #servo_params = {"moveit_servo": servo_yaml}
+    servo_params = load_yaml("moveit_panda", "config/left_servo.yaml")
+    
+
     kinematics_yaml = load_yaml("moveit_panda","config/kinematics.yaml")
     kinematics_params = {"robot_description_kinematics": kinematics_yaml}
 
@@ -99,6 +107,7 @@ def generate_launch_description():
                 {"use_sim_time": True},
             ],
             output="screen",
+            #arguments=['--ros-args', '--log-level', 'debug'],
         ),
         
 
@@ -115,6 +124,7 @@ def generate_launch_description():
             
             ],
             output="screen",
+            #arguments=['--ros-args', '--log-level', 'debug'],
         ),
 
       
@@ -156,10 +166,12 @@ def generate_launch_description():
             parameters=[
                 {"robot_description": robot_description},
                 moveit_config.robot_description_semantic,
-                {"use_sim_time": True},
+                {"use_sim_time": True},\
+                load_yaml("moveit_panda", "config/kinematics.yaml")
             ],
             arguments=["-d", os.path.join(get_package_share_directory("moveit_panda"), "config", "moveit.rviz")],
             output="screen",
+         
         ),
 
         Node(package="robot_bringup", executable="ee_marker"),
@@ -176,13 +188,65 @@ def generate_launch_description():
                     parameters=[
                         #os.path.join(get_package_share_directory("moveit_panda"), "config", "left_servo.yaml"),
                         servo_params,
+                        {
+                            # Servo core settings
+                            "moveit_servo.use_gazebo": False,
+                            "moveit_servo.command_in_type": "speed_units",
+                            "moveit_servo.scale.linear": 0.6,
+                            "moveit_servo.scale.rotational": 0.3,
+                            "moveit_servo.scale.joint": 0.01,
+
+                            # Outgoing command settings
+                            "moveit_servo.publish_period": 0.034,
+                            "moveit_servo.command_out_type": "trajectory_msgs/JointTrajectory",
+                            "moveit_servo.publish_joint_positions": True,
+                            "moveit_servo.publish_joint_velocities": False,
+                            "moveit_servo.publish_joint_accelerations": False,
+                            "moveit_servo.smoothing_filter_plugin_name": "online_signal_smoothing::ButterworthFilterPlugin",
+
+                            # MoveIt integration
+                            "moveit_servo.move_group_name": "panda1_arm",
+                            "moveit_servo.planning_frame": "base",
+                            "moveit_servo.ee_frame_name": "left_fr3_link8",
+                            "moveit_servo.robot_link_command_frame": "left_fr3_link8",
+
+                            # Stopping behaviour
+                            "moveit_servo.incoming_command_timeout": 0.1,
+                            "moveit_servo.num_outgoing_halt_msgs_to_publish": 4,
+
+                            # Singularity & joint‐limit handling
+                            "moveit_servo.lower_singularity_threshold": 17.0,
+                            "moveit_servo.hard_stop_singularity_threshold": 30.0,
+                            "moveit_servo.joint_limit_margin": 0.1,
+                            "moveit_servo.leaving_singularity_threshold_multiplier": 2.0,
+
+                            # Topics
+                            "moveit_servo.cartesian_command_in_topic": "~/delta_twist_cmds",
+                            "moveit_servo.joint_command_in_topic":    "~/delta_joint_cmds",
+                            "moveit_servo.joint_topic":               "/joint_states",
+                            "moveit_servo.status_topic":              "~/status",
+                            "moveit_servo.command_out_topic":         "/panda1_arm_controller/joint_trajectory",
+
+                            # Collision checking
+                            "moveit_servo.check_collisions": True,
+                            "moveit_servo.collision_check_rate": 10.0,
+                            "moveit_servo.self_collision_proximity_threshold": 0.01,
+                            "moveit_servo.scene_collision_proximity_threshold": 0.02,
+                        },
+                        {'use_intra_process_comms' : True},
                         {"robot_description": robot_description},
                         moveit_config.robot_description_semantic,
                         load_yaml("moveit_panda", "config/kinematics.yaml"),
-                        {"use_sim_time": True},
-                        {'use_intra_process_comms': True}
-                       
                     ],
+                    remappings=[
+                              
+                                ("joint_command", "/panda1_arm_controller/joint_trajectory"),
+                                ("status", "/servo_left/status")
+                            ],
+
+                   arguments=['--ros-args', '--log-level', 'debug'],
+                            
+                    
 
                 ),
             # """   Node(

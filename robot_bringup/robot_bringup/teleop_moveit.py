@@ -3,7 +3,9 @@ import rclpy
 from rclpy.node import Node
 import numpy as np
 import math
-
+from trajectory_msgs.msg import JointTrajectory
+from control_msgs.action import FollowJointTrajectory
+from rclpy.action import ActionClient
 from geometry_msgs.msg import PoseStamped, TwistStamped
 
 class TeleopWithMoveGroup(Node):
@@ -18,6 +20,14 @@ class TeleopWithMoveGroup(Node):
         self.prev_time = None
         self.prev_pos = None
         self.prev_euler = None
+        self.joint_traj_sub = self.create_subscription(
+            JointTrajectory,
+            '/servo_left/joint_command',
+            self.relay_trajectory,
+            10
+        )
+        self.client = ActionClient(self, FollowJointTrajectory, '/panda1_arm_controller/follow_joint_trajectory')
+
 
     def quaternion_to_euler(self, x, y, z, w):
         t0 = +2.0 * (w * x + y * z)
@@ -64,8 +74,8 @@ class TeleopWithMoveGroup(Node):
         twist.twist.angular.x = float(ang_vel[0])
         twist.twist.angular.y = float(ang_vel[1])
         twist.twist.angular.z = float(ang_vel[2])
-        MAX_LINEAR_VEL = 0.5  # m/s
-        MAX_ANGULAR_VEL = 1.0  # rad/s
+        MAX_LINEAR_VEL = 0.1  # m/s
+        MAX_ANGULAR_VEL = 0.05  # rad/s
 
         twist.twist.linear.x = max(min(twist.twist.linear.x, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
         twist.twist.linear.y = max(min(twist.twist.linear.y, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
@@ -77,6 +87,16 @@ class TeleopWithMoveGroup(Node):
         self.prev_time = current_time
         self.prev_pos = pos
         self.prev_euler = euler
+
+
+    def relay_trajectory(self, msg):
+        if not self.client.wait_for_server(timeout_sec=1.0):
+            self.get_logger().warn('Controller action server not available.')
+            return
+
+        goal_msg = FollowJointTrajectory.Goal()
+        goal_msg.trajectory = msg
+        self.client.send_goal_async(goal_msg)
 
 def main():
     rclpy.init()

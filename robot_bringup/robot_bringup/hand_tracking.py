@@ -73,6 +73,7 @@ class HandTrackingNode(Node):
                     pose_l.pose.position.x = msg.x
                     pose_l.pose.position.y = msg.y
                     pose_l.pose.position.z = 0.4 
+
                     q = euler_to_quaternion(msg.theta, 0, 0)
                     pose_l.pose.orientation.x = q[0]
                     pose_l.pose.orientation.y = q[1]
@@ -80,6 +81,7 @@ class HandTrackingNode(Node):
                     pose_l.pose.orientation.w = q[3]
 
                     self.left_pose_pub.publish(pose_l)
+                    print(pose_l)
 
                 
                 

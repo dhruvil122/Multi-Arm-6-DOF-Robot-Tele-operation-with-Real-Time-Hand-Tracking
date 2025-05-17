@@ -19,41 +19,46 @@
     <group name="panda1_arm">
         <!-- chain from link0 → link6 (the last moving link) -->
         <chain base_link="left_fr3_link0"
-            tip_link="left_fr3_link6"/>
+            tip_link="left_fr3_link8"/>
     </group>
     <!-- left gripper joint as its own group -->
     <group name="panda1_gripper">
+        <link name="left_fr3_hand"/>
+        <link name="left_fr3_leftfinger"/>
+        <link name="left_fr3_rightfinger"/>
         <joint name="left_fr3_finger_joint1"/>
+        <passive_joint name="left_fr3_finger_joint2"/>
     </group>
     <!-- define the end-effector -->
-    <end_effector name="panda1_hand"
-                    group="panda1_arm"
-                    parent_link="left_fr3_link6"
-                    component_group="panda1_gripper"/>
+    <end_effector  name="panda1_hand"
+                    group="panda1_gripper"
+                    parent_link="left_fr3_link8"
+                    parent_group="panda1_arm"/>
 
-    <!-- 3) Right 6-DOF arm -->
+
+    <!-- 2) Left 6-DOF arm -->
     <group name="panda2_arm">
+        <!-- chain from link0 → link6 (the last moving link) -->
         <chain base_link="right_fr3_link0"
-            tip_link="right_fr3_link6"/>
+            tip_link="right_fr3_link8"/>
     </group>
+    <!-- right gripper joint as its own group -->
     <group name="panda2_gripper">
+        <link name="right_fr3_hand"/>
+        <link name="right_fr3_leftfinger"/>
+        <link name="right_fr3_rightfinger"/>
         <joint name="right_fr3_finger_joint1"/>
+        <passive_joint name="right_fr3_finger_joint2"/>
     </group>
-    <end_effector name="panda2_hand"
-                    group="panda2_arm"
-                    parent_link="right_fr3_link6"
-                    component_group="panda2_gripper"/>
+    <!-- define the end-effector -->
+    <end_effector  name="panda2_hand"
+                    group="panda2_gripper"
+                    parent_link="right_fr3_link8"
+                    parent_group="panda2_arm"/>
 
 
 
-    <!-- 5) Declare gripper joints as passive (MoveIt won’t try to plan them) -->
-    <passive_joint name="left_fr3_finger_joint1"/>
-    <passive_joint name="right_fr3_finger_joint1"/>
 
-
-    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="panda1_hand" parent_link="left_fr3_link8" group="panda1_gripper"/>
-    <end_effector name="panda2_hand" parent_link="right_fr3_link8" group="panda2_gripper"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="left_fr3_hand" link2="left_fr3_leftfinger" reason="Adjacent"/>
  

@@ -14,7 +14,7 @@ class CircleMarkerPublisher(Node):
       
 
         left_marker = Marker()
-        left_marker.header.frame_id = "left_fr3_hand"
+        left_marker.header.frame_id = "left_fr3_link8"
         left_marker.header.stamp = node.get_clock().now().to_msg()
         left_marker.ns = "left_ee_marker"
         left_marker.id = 0
@@ -57,7 +57,7 @@ class CircleMarkerPublisher(Node):
         
         
         right_marker = Marker()
-        right_marker.header.frame_id = "right_fr3_hand"
+        right_marker.header.frame_id = "right_fr3_link8"
         right_marker.header.stamp = node.get_clock().now().to_msg()
         right_marker.ns = "right_ee_marker"
         right_marker.id = 0
