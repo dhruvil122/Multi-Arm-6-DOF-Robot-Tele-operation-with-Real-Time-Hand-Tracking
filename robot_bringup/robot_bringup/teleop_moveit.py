@@ -51,7 +51,7 @@ class TeleopWithMoveGroup(Node):
         self.right_prev_time = None
         self.right_prev_pos = None
         self.right_prev_euler = None
-
+        
 
     def quaternion_to_euler(self, x, y, z, w):
 
@@ -68,7 +68,10 @@ class TeleopWithMoveGroup(Node):
         t4 = +1.0 - 2.0 * (y * y + z * z)
         Z = math.atan2(t3, t4)
 
-        return np.array([X, Y, Z])  # Radians
+        return np.array([X, Y, Z])  
+
+
+    
     
     def left_relay_trajectory(self, msg):
         if not self.client.wait_for_server(timeout_sec=1.0):
@@ -160,8 +163,8 @@ class TeleopWithMoveGroup(Node):
         twist.twist.angular.x = float(ang_vel[0])
         twist.twist.angular.y = float(ang_vel[1])
         twist.twist.angular.z = float(ang_vel[2])
-        MAX_LINEAR_VEL = 0.1  # m/s
-        MAX_ANGULAR_VEL = 0.05  # rad/s
+        MAX_LINEAR_VEL = 0.1 
+        MAX_ANGULAR_VEL = 0.05  
 
         twist.twist.linear.x = max(min(twist.twist.linear.x, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
         twist.twist.linear.y = max(min(twist.twist.linear.y, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
