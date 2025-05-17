@@ -137,6 +137,7 @@ def generate_launch_description():
                     moveit_config.trajectory_execution,
                     moveit_config.moveit_cpp,
                     moveit_config.planning_pipelines,
+                    { 'planning_pipelines': ['ompl_interface/OMPLPlanner'] },
                     {
                         "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager"
                     },
@@ -236,7 +237,7 @@ def generate_launch_description():
                 ],
                 output="screen",
             ),
-            Node(package="robot_bringup", executable="ee_marker"),
+            #Node(package="robot_bringup", executable="ee_marker"),
             Node(package="robot_bringup", executable="hand_tracking"),
             Node(package="robot_bringup", executable="teleop_moveit"),
             TimerAction(
