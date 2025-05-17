@@ -54,8 +54,8 @@ class HandTrackingNode(Node):
                 drawing_styles.get_default_hand_connections_style(),)
 
                 msg = Pose2D()
-                msg.x = wrist.x
-                msg.y = wrist.y
+                msg.x = wrist.x/2
+                msg.y = wrist.y/2
                 msg.theta = math.atan2(msg.y,msg.x)
 
                 if label.lower() == 'left':

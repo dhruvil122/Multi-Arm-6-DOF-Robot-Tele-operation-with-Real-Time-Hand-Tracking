@@ -50,7 +50,10 @@ def generate_launch_description():
     moveit_config.robot_description = {"robot_description": robot_description}
     servo_yaml = load_yaml("moveit_panda", "config/left_servo.yaml")
     servo_params = {"moveit_servo": servo_yaml}
+    kinematics_yaml = load_yaml("moveit_panda","config/kinematics.yaml")
+    kinematics_params = {"robot_description_kinematics": kinematics_yaml}
 
+    
     
 
     return LaunchDescription([
@@ -175,8 +178,10 @@ def generate_launch_description():
                         servo_params,
                         {"robot_description": robot_description},
                         moveit_config.robot_description_semantic,
-                        moveit_config.robot_description_kinematics,
-                        {"use_sim_time": True}
+                        load_yaml("moveit_panda", "config/kinematics.yaml"),
+                        {"use_sim_time": True},
+                        {'use_intra_process_comms': True}
+                       
                     ],
 
                 ),

@@ -57,6 +57,7 @@ panda2_arm_controller:
       - position
     state_interfaces:
       - position
+      - velocity
 
 panda1_gripper_controller:
   ros__parameters:

@@ -44,13 +44,7 @@
                     parent_link="right_fr3_link6"
                     component_group="panda2_gripper"/>
 
-    <!-- 4) Optional: drive both arms at once -->
-    <group name="panda_arm">
-        <chain base_link="left_fr3_link0"
-            tip_link="left_fr3_link6"/>
-        <chain base_link="right_fr3_link0"
-            tip_link="right_fr3_link6"/>
-    </group>
+
 
     <!-- 5) Declare gripper joints as passive (MoveIt won’t try to plan them) -->
     <passive_joint name="left_fr3_finger_joint1"/>
