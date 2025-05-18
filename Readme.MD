@@ -102,6 +102,13 @@ Node 5) rviz2 - Visualisation Node.
 4) Moveit
 
 
+## Limitations
+
+1) Based on the camera feedback and hardware configuration, The robots can LAG when executing trajectories.
+
+2) Major Issue: Reaching Singularity. The robot has only 3 DOF; hence, limited by the movements.
+
+
 ## Refrences
 
 
