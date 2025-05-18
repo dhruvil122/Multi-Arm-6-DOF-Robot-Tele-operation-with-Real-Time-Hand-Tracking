@@ -77,9 +77,13 @@ ros2 launch moveit_panda moveit_rviz.launch.py arm_id:=multi_arm load_gripper:=t
 There are 5 Main nodes running on moveit.launch.py file.
 
 Node 1) Hand_tracking - Starts the camera, detects hand, generated landmark points, publishes  x and y POSESTAMPED msgs to a topic.
+
 Node 2) teleop_moveit - Subscribes to the POSESTAMPED msgs, converts them into twist_msgs for Moveit_Servo to use.
+
 Node 3) Moveit_servo - Servoing node which takes care of motion planning. The output will generate delta TwistCommands to the controllers.
+
 Node 4) move_group - Motion planning node, reponsible for controllers. Controllers will act on delta twist commands and the robot will move.
+
 Node 5) rviz2 - Visualisation Node.
 
 ## Package List
