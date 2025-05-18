@@ -112,8 +112,8 @@ class TeleopWithMoveGroup(Node):
         twist.twist.angular.x = float(ang_vel[0])
         twist.twist.angular.y = float(ang_vel[1])
         twist.twist.angular.z = float(ang_vel[2])
-        MAX_LINEAR_VEL = 0.2 # m/s
-        MAX_ANGULAR_VEL = 0.1  # rad/s
+        MAX_LINEAR_VEL = 0.3 # m/s
+        MAX_ANGULAR_VEL = 0.15  # rad/s
 
         twist.twist.linear.x = max(min(twist.twist.linear.x, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
         twist.twist.linear.y = max(min(twist.twist.linear.y, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
@@ -164,8 +164,8 @@ class TeleopWithMoveGroup(Node):
         twist.twist.angular.x = float(ang_vel[0])
         twist.twist.angular.y = float(ang_vel[1])
         twist.twist.angular.z = float(ang_vel[2])
-        MAX_LINEAR_VEL = 0.2
-        MAX_ANGULAR_VEL = 0.1 
+        MAX_LINEAR_VEL = 0.3
+        MAX_ANGULAR_VEL = 0.15
 
         twist.twist.linear.x = max(min(twist.twist.linear.x, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
         twist.twist.linear.y = max(min(twist.twist.linear.y, MAX_LINEAR_VEL), -MAX_LINEAR_VEL)
