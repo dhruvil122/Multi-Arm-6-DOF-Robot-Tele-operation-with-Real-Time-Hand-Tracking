@@ -55,7 +55,8 @@ class HandTrackingNode(Node):
         self.closed_pos = 0.01
         self.open_pos = 0.04
         self.move_time = 1.0
-
+        #if using camera from laptop or USB:
+        #self.cap = cv2.VideoCapture(0)
         self.cap = cv2.VideoCapture("http://192.168.64.1:5000/video_feed")
 
         self.mp_hands = mp.solutions.hands
