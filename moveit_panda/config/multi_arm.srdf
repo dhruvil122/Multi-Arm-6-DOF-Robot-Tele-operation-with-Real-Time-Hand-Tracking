@@ -26,6 +26,10 @@
         <joint name="left_fr3_finger_joint1"/>
         <joint name="left_fr3_finger_joint2"/>
     </group>
+    <group name="panda2_gripper">
+        <joint name="right_fr3_finger_joint1"/>
+        <joint name="right_fr3_finger_joint2"/>
+    </group>
     <!-- define the end-effector -->
     <end_effector  name="panda1_hand"
                     group="panda1_gripper"
@@ -39,12 +43,9 @@
         <chain base_link="right_fr3_link0"
             tip_link="right_fr3_link8"/>
     </group>
-    <!-- right gripper joint as its own group -->
-    <group name="panda2_gripper">
-        <joint name="right_fr3_finger_joint1"/>
-        <joint name="right_fr3_finger_joint2"/>
-       
-    </group>
+
+     
+   
     <!-- define the end-effector -->
     <end_effector  name="panda2_hand"
                     group="panda2_gripper"

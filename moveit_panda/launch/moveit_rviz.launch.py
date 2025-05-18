@@ -79,7 +79,7 @@ def generate_launch_description():
     moveit_config.robot_description = {"robot_description": robot_description}
     # servo_yaml = load_yaml("moveit_panda", "config/left_servo.yaml")
     # servo_params = {"moveit_servo": servo_yaml}
-    servo_params = load_yaml("moveit_panda", "config/left_servo.yaml")
+    servo_params = load_yaml("moveit_panda", "config/servo.yaml")
 
     kinematics_yaml = load_yaml("moveit_panda", "config/kinematics.yaml")
     kinematics_params = {"robot_description_kinematics": kinematics_yaml}
@@ -197,7 +197,7 @@ def generate_launch_description():
                         package="controller_manager",
                         executable="spawner",
                         arguments=[
-                            "panda1_gripper_controller",
+                            "panda1_gripper_trajectory_controller",
                             "--controller-manager",
                             "/controller_manager",
                         ],
@@ -207,7 +207,7 @@ def generate_launch_description():
                         package="controller_manager",
                         executable="spawner",
                         arguments=[
-                            "panda2_gripper_controller",
+                            "panda2_gripper_trajectory_controller",
                             "--controller-manager",
                             "/controller_manager",
                         ],
@@ -256,7 +256,7 @@ def generate_launch_description():
                                 "moveit_servo.scale.linear": 0.6,
                                 "moveit_servo.scale.rotational": 0.3,
                                 "moveit_servo.scale.joint": 0.01,
-                                "moveit_servo.publish_period": 0.034,
+                                "moveit_servo.publish_period": 0.0175,
                                 "moveit_servo.command_out_type": "trajectory_msgs/JointTrajectory",
                                 "moveit_servo.publish_joint_positions": True,
                                 "moveit_servo.publish_joint_velocities": False,
@@ -313,7 +313,7 @@ def generate_launch_description():
                                 "moveit_servo.scale.linear": 0.6,
                                 "moveit_servo.scale.rotational": 0.3,
                                 "moveit_servo.scale.joint": 0.01,
-                                "moveit_servo.publish_period": 0.034,
+                                "moveit_servo.publish_period": 0.0175,
                                 "moveit_servo.command_out_type": "trajectory_msgs/JointTrajectory",
                                 "moveit_servo.publish_joint_positions": True,
                                 "moveit_servo.publish_joint_velocities": False,

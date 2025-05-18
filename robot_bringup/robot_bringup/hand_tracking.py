@@ -11,6 +11,13 @@ import mediapipe.python.solutions.drawing_styles as drawing_styles
 class HandTrackingNode(Node):
     def __init__(self):
         super().__init__("hand_tracking_node")
+
+        self.gripper_state = "OPEN"       
+        self.gesture_buffer = []            
+        self.buffer_size = 5                 
+        self.pinched_threshold = 0.1       
+       
+
         self.publisher_left = self.create_publisher(
             Pose2D, "/hand_tracking/panda1/pose2d", 10
         )
@@ -23,6 +30,12 @@ class HandTrackingNode(Node):
         self.right_pose_pub = self.create_publisher(
             PoseStamped, "/right_teleop_target_pose", 10
         )
+        self.left_gripper_pub = self.create_publisher(
+            PoseStamped, "/left_gripper_target_pose", 10
+        )
+        self.right_gripper_pub = self.create_publisher(
+            PoseStamped, "/right_gripper_target_pose", 10
+        )
 
         self.cap = cv2.VideoCapture("http://192.168.64.1:5000/video_feed")
 
@@ -33,7 +46,14 @@ class HandTrackingNode(Node):
         self.timer = self.create_timer(1.0 / 60.0, self.process_frame)
         self.prev_left = np.array([0.0, 0.0])
         self.prev_right = np.array([0.0, 0.0])
-        self.alpha = 0.9
+        self.alpha = 0.95
+
+    def grip_gesture(self, tip_distance):
+        if tip_distance < self.pinched_threshold:
+            return "PINCH"
+        else :
+            return "OPEN"
+        
 
     def lowpass(self, current: np.ndarray, previous: np.ndarray) -> np.ndarray:
         return self.alpha * current + (1 - self.alpha) * previous
@@ -62,7 +82,7 @@ class HandTrackingNode(Node):
             self.get_logger().warn("Failed to read frame from camera.")
             return
         if success:
-            frame = cv2.resize(frame, (1280, 720))
+            frame = cv2.resize(frame, (640, 480))
             frame = cv2.flip(frame, 1)
 
         image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -76,9 +96,21 @@ class HandTrackingNode(Node):
             ):
                 label = handedness.classification[0].label
                 wrist = hand_landmarks.landmark[self.mp_hands.HandLandmark.WRIST]
+                thumb_tip = hand_landmarks.landmark[
+                    self.mp_hands.HandLandmark.THUMB_TIP
+                ]
                 index_finger_tip = hand_landmarks.landmark[
                     self.mp_hands.HandLandmark.INDEX_FINGER_TIP
                 ]
+
+                tip_distance = math.sqrt(
+                    (index_finger_tip.x - thumb_tip.x) ** 2
+                    + (index_finger_tip.y - thumb_tip.y) ** 2
+                )
+             
+                gripper_state = self.grip_gesture(tip_distance)
+
+
                 self.mp_draw.draw_landmarks(
                     frame,
                     hand_landmarks,
@@ -86,6 +118,7 @@ class HandTrackingNode(Node):
                     drawing_styles.get_default_hand_landmarks_style(),
                     drawing_styles.get_default_hand_connections_style(),
                 )
+
 
                 msg = Pose2D()
                 # msg.x = (index_finger_tip.x - 0.5)
@@ -110,7 +143,7 @@ class HandTrackingNode(Node):
                     pose_l = PoseStamped()
                     pose_l.header.stamp = rclpy.time.Time().to_msg()
                     x, y = filtered_coordinates
-                    self.get_logger().info(f"Published left hand: x={x:.2f}, y={y:.2f}")
+                    #self.get_logger().info(f"Published left hand: x={x:.2f}, y={y:.2f}")
                     theta = math.atan2(y, x)
                     pose_l.header.frame_id = "left_fr3_link0"
                     pose_l.pose.position.x = x * 2
@@ -125,7 +158,7 @@ class HandTrackingNode(Node):
 
                     self.left_pose_pub.publish(pose_l)
 
-                    print(pose_l)
+                    #print(pose_l)
 
                 else:
                     self.publisher_right.publish(msg)
@@ -148,6 +181,23 @@ class HandTrackingNode(Node):
                     pose_r.pose.orientation.w = q[3]
 
                     self.right_pose_pub.publish(pose_r)
+
+
+                # Gripper state
+
+                if gripper_state == "PINCH":
+                    gripper_msg = PoseStamped()
+                    gripper_msg.header.stamp = rclpy.time.Time().to_msg()
+                    gripper_msg.header.frame_id = "left_fr3_link0"
+                    gripper_msg.pose.position.x = 0.0
+                    gripper_msg.pose.position.y = 0.0
+                    gripper_msg.pose.position.z = 0.0
+                    q = self.euler_to_quaternion(0, 0, 0)
+                    gripper_msg.pose.orientation.x = q[0]
+                    gripper_msg.pose.orientation.y = q[1]
+                    gripper_msg.pose.orientation.z = q[2]
+                    gripper_msg.pose.orientation.w = q[3]
+                    self.left_gripper_pub.publish(gripper_msg)
 
         cv2.imshow("Hand Tracking", frame)
         cv2.waitKey(1)
