@@ -71,7 +71,7 @@ ros2 launch moveit_panda moveit_rviz.launch.py arm_id:=multi_arm load_gripper:=t
 4) Wait for 10seconds(moveit_servo wait time. Can be changed in the launch file) for Teleoperation service to start and then start moving your hands. You can move both of your hands at the same time. Both robots can work togather.
 
 
------------------------------------------- Nodes and their details---------------------------
+## Nodes and their Details
 
 
 There are 5 Main nodes running on moveit.launch.py file.
@@ -82,13 +82,15 @@ Node 3) Moveit_servo - Servoing node which takes care of motion planning. The ou
 Node 4) move_group - Motion planning node, reponsible for controllers. Controllers will act on delta twist commands and the robot will move.
 Node 5) rviz2 - Visualisation Node.
 
-------------------------------------------Package List------------------------------------------
+## Package List
 
 1) franka_desrption - contains robot description files(i.e. URDF)
+
 2) robot_bringup - contains hand_tracking and teleop_moveit nodes.
+
 3) moveit_panda - contains robot controllers, SRDF , Kinematics file servo config and main launch file named 'moveit_rviz.launch.py'
 
-------------------------------------------External Libraries/Packages---------------------------
+## External Libraries/ Packages
 
 1) Mediapipe
 2) OpenCv2
@@ -96,18 +98,23 @@ Node 5) rviz2 - Visualisation Node.
 4) Moveit
 
 
--------------------------------------------Refrences----------------------------------------------
+## Refrences
 
 
 Franka description - Stripped from Franka_ros2 - https://github.com/frankaemika/franka_ros2
+
 MediaPipe - https://github.com/prashver/hand-landmark-recognition-using-mediapipe/blob/main/video_input/hand_tracking_video.py
+
 Moveit_servo refrence - https://github.com/moveit/moveit2/tree/cc635471aadfb9446398ece319ae31c6b72bec86/moveit_ros/moveit_servo
 
 other refrences(username) : 
 
 Mediapipe(prashver) : https://github.com/glorie-git/gesture_recognizer
+
 Mediapipe(Sousannah) : https://github.com/Sousannah/hand-tracking-using-mediapipe/blob/main/hand_tracking.py
+
 Moveit_servo(horatioh13) : https://github.com/horatioh13/ROS_WORK 
+
 Teleoperation a robot arm with computer vision (blog: Graham clifford)- used for methodology- https://graham-clifford.com/Robot-Arm-Teleoperation-Through-Computer-Vision-Hand-Tracking/
 
 
