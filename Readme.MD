@@ -22,11 +22,7 @@ The important one is `Joint Trajectory Controller`
 sudo apt update && sudo apt install ros-humble-ros2-control ros-humble-ros2-controllers 
 ```
 --------------------------------------------------------------------------------------------------------
-Camera Setup:
 
-Camera setup is in steps to teleoperate
-
-----------------------------------------------------------------------------------------------------------
 Hand Tracking : 
 From pip , please install mediapipe by executing:
 
@@ -68,6 +64,8 @@ ros2 launch moveit_panda moveit_rviz.launch.py arm_id:=multi_arm load_gripper:=t
 ```
 
 4) Wait for 10seconds(moveit_servo wait time. Can be changed in the launch file) for Teleoperation service to start and then start moving your hands. You can move both of your hands at the same time. Both robots can work togather.
+
+
 
 
 
