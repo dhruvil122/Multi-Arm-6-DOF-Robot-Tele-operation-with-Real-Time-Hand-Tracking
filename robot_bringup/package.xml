@@ -4,8 +4,18 @@
   <name>robot_bringup</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="dhruvil@todo.todo">dhruvil</maintainer>
+  <maintainer email="student.dhruvil@hotmail.com">dhruvil</maintainer>
   <license>TODO: License declaration</license>
+
+  <depend>geometry_msgs</depend>            
+  <depend>trajectory_msgs</depend>         
+  <depend>control_msgs</depend>            
+  <depend>visualization_msgs</depend>       
+  <depend>cv_bridge</depend>              
+
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>mediapipe</exec_depend>
+  <exec_depend>numpy</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
@@ -16,6 +26,7 @@
   <exec_depend>rviz2</exec_depend>
   <exec_depend>xacro</exec_depend>
   <exec_depend>franka_description</exec_depend>
+
 
   <export>
     <build_type>ament_python</build_type>

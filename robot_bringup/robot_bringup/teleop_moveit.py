@@ -52,6 +52,7 @@ class TeleopWithMoveGroup(Node):
         self.right_prev_pos = None
         self.right_prev_euler = None
         
+        
 
     def quaternion_to_euler(self, x, y, z, w):
 

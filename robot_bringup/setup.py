@@ -24,8 +24,6 @@ setup(
             'hand_tracking = robot_bringup.hand_tracking:main',
             'teleop_moveit = robot_bringup.teleop_moveit:main',
             'test_ik = robot_bringup.test_ik:main',
-          
-      
         ],
     },
 )
