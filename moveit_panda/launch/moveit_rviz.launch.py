@@ -137,7 +137,6 @@ def generate_launch_description():
                     moveit_config.trajectory_execution,
                     moveit_config.moveit_cpp,
                     moveit_config.planning_pipelines,
-                    { 'planning_pipelines': ['ompl_interface/OMPLPlanner'] },
                     {
                         "moveit_controller_manager": "moveit_simple_controller_manager/MoveItSimpleControllerManager"
                     },
@@ -149,7 +148,6 @@ def generate_launch_description():
                         )
                     },
                     {"allow_trajectory_execution": True},
-                    {"fake_execution_type": "interpolate"},
                     {"trajectory_execution.allowed_execution_duration_scaling": 1.2},
                     {"use_sim_time": True},
                 ],
@@ -287,7 +285,7 @@ def generate_launch_description():
                             {"use_intra_process_comms": True},
                             {"robot_description": robot_description},
                             moveit_config.robot_description_semantic,
-                            load_yaml("moveit_panda", "config/kinematics.yaml"),
+                            moveit_config.robot_description_kinematics,
                         ],
                         remappings=[
                             (

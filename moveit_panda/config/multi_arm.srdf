@@ -23,17 +23,13 @@
     </group>
     <!-- left gripper joint as its own group -->
     <group name="panda1_gripper">
-        <link name="left_fr3_hand"/>
-        <link name="left_fr3_leftfinger"/>
-        <link name="left_fr3_rightfinger"/>
         <joint name="left_fr3_finger_joint1"/>
-    
-        <passive_joint name="left_fr3_finger_joint2"/>
+        <joint name="left_fr3_finger_joint2"/>
     </group>
     <!-- define the end-effector -->
     <end_effector  name="panda1_hand"
                     group="panda1_gripper"
-                    parent_link="left_fr3_link8"
+                    parent_link="left_fr3_hand"
                     />
 
 
@@ -45,16 +41,14 @@
     </group>
     <!-- right gripper joint as its own group -->
     <group name="panda2_gripper">
-        <link name="right_fr3_hand"/>
-        <link name="right_fr3_leftfinger"/>
-        <link name="right_fr3_rightfinger"/>
         <joint name="right_fr3_finger_joint1"/>
-        <passive_joint name="right_fr3_finger_joint2"/>
+        <joint name="right_fr3_finger_joint2"/>
+       
     </group>
     <!-- define the end-effector -->
     <end_effector  name="panda2_hand"
                     group="panda2_gripper"
-                    parent_link="right_fr3_link8"
+                    parent_link="right_fr3_hand"
                     />
 
 

@@ -60,6 +60,7 @@ class HandTrackingNode(Node):
         success, frame = self.cap.read()
         if not success:
             self.get_logger().warn("Failed to read frame from camera.")
+            return
         if success:
             frame = cv2.resize(frame, (1280, 720))
             frame = cv2.flip(frame, 1)
