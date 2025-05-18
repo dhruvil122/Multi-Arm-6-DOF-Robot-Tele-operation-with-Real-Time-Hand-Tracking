@@ -18,7 +18,7 @@ The important one is `Joint Trajectory Controller`
 
 ```bash
 sudo apt update && sudo apt install ros-humble-ros2-control ros-humble-ros2-controllers 
-
+```
 
 
 From pip package, please install mediapipe by executing:
@@ -26,3 +26,4 @@ From pip package, please install mediapipe by executing:
 ```bash
 pip install --upgrade pip
 pip install mediapipe opencv-python
+```
