@@ -62,21 +62,21 @@ panda1_gripper_trajectory_controller:
   ros__parameters:
     joints:
       - left_fr3_finger_joint1
-    
+     
     command_interfaces:
       - position
       
     state_interfaces:
       - position
-      - velocity
+    
 panda2_gripper_trajectory_controller:
   ros__parameters:
     joints:
       - right_fr3_finger_joint1
-  
+     
     command_interfaces:
       - position
      
     state_interfaces:
       - position
-      - velocity
+    

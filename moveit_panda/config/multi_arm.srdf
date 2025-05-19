@@ -24,11 +24,9 @@
     <!-- left gripper joint as its own group -->
     <group name="panda1_gripper">
         <joint name="left_fr3_finger_joint1"/>
-        <joint name="left_fr3_finger_joint2"/>
     </group>
     <group name="panda2_gripper">
         <joint name="right_fr3_finger_joint1"/>
-        <joint name="right_fr3_finger_joint2"/>
     </group>
     <!-- define the end-effector -->
     <end_effector  name="panda1_hand"
@@ -89,7 +87,7 @@
 
     <disable_collisions link1="right_fr3_hand" link2="right_fr3_link7" reason="Adjacent"/>
     <disable_collisions link1="right_fr3_hand" link2="right_fr3_rightfinger" reason="Adjacent"/>
-    <disable_collisions link1="right_fr3_leftfinger" link2="right_fr3_rightfinger" reason="never"/>
+    <disable_collisions link1="right_fr3_leftfinger" link2="right_fr3_rightfinger" reason="adjacent"/>
    
     <disable_collisions link1="left_fr3_leftfinger" link2="left_fr3_rightfinger" reason="never"/>
    

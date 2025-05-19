@@ -228,12 +228,14 @@ class HandTrackingNode(Node):
                         "left_fr3_finger_joint1",
                         self.closed_pos,
                     )
+                 
                 else:
                     self.send_gripper_traj(
                         self.left_gripper_traj_pub,
                         "left_fr3_finger_joint1",
                         self.open_pos,
                     )
+                
 
                 if self.right_gripper_state == "PINCH":
                     self.send_gripper_traj(
@@ -241,12 +243,14 @@ class HandTrackingNode(Node):
                         "right_fr3_finger_joint1",
                         self.closed_pos,
                     )
+        
                 else:
                     self.send_gripper_traj(
                         self.right_gripper_traj_pub,
                         "right_fr3_finger_joint1",
                         self.open_pos,
                     )
+                 
 
         cv2.imshow("Hand Tracking", frame)
         cv2.waitKey(1)
